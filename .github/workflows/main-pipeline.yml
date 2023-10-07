@@ -63,7 +63,9 @@ jobs:
       Greeting: Good morning
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3 #this clones the code to the runner of that trigger branch    
+        uses: actions/checkout@v3 #this clones the code to the runner of that trigger branch 
+        with:
+          fetch-depth: 0           
       - name: "Get existing tags"
         run: |
           echo "Print existing tags"
