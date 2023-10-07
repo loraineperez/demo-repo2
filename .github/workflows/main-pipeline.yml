@@ -1,0 +1,91 @@
+name: Main branch pipeline
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+      
+env:
+  DAY_OF_WEEK: Monday
+  Dollars: 5
+  Cents: 50
+  First_Name: Kat
+  Greeting: Good Afternoon
+
+jobs:
+  greeting_job:
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Good morning #over power good Afternoon 
+    steps:
+      - name: "Say Hello Kat it's Friday"
+        run: echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
+        env:
+          First_Name: Kat
+          Greeting: Good evening  #over power good morning 
+      - name: "Listing the files"
+        run: ls -l
+      - name: "Printing the date"
+        run: date                  
+      - name: "Print working directory"
+        run: pwd
+      - name: "List hidden files"
+        run: ls -a          
+      - name: "Say good morning Kat I have 5 dollars"
+        run: echo "$Greeting $First_Name. I have $Dollars Dollars!"
+      - name: "Say good afternoon Kat I have 5 dollars and 50 cents"
+        run: echo "$Greeting $First_Name. I have $Dollars dollars and $Cents cents!"
+  create_release_tag_job_preview:
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Good morning
+    steps:
+      - name: "Print current year, week, release tag"
+        run: |
+          echo "This is the current year"
+          myyear=`date +'%y'`
+          echo $myyear
+          echo "This is the current week"
+          week=`date +'%W'`
+          echo $week
+          echo "This is the release tag"
+          releasetag=REL_$myyear.$week.00
+          echo REL_$myyear.$week.00
+  create_release_tag_job:
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Good morning
+    steps:
+      - name: "Get existing tags"
+        run: |
+          echo "Print existing tags"
+          git tag
+          echo "Saving tags to releasetags.txt"
+          git tag > releasetags.txt
+          echo "Printing releasetags.txt"
+          cat releasetags.txt
+      - name: "Print current year"
+        id: year
+        run: |
+          echo "This is the current year"
+          myyear=`date +'%y'`
+          echo $myyear
+          echo "myyear=$myyear" >> $GITHUB_OUTPUT
+      - name: "Print current week"
+        id: week      
+        run: |
+          echo "This is the current week"
+          week=`date +'%W'`
+          echo $week
+          echo "week=$week" >> $GITHUB_OUTPUT
+      - name: "Forming release tag"
+        run: |
+          echo "This is the release tag"
+          releasetag=REL_$myyear.$week.00
+          echo REL_${{ steps.year.outputs.myyear }}.${{ steps.week.outputs.week }}.00               
